@@ -13,4 +13,7 @@ The table is a major part of this project, so it required some thought. This pro
 
 [IMAGE SHOWING IDEAL PHONE LAYOUT VS IDEAL DESKTOP LAYOUT]
 
-Alternatively, I could design a flexbox layout that mimics a table, but would be ideal on all devices using reponsive flexbox properties - a "real world" solution to our problem. This however wouldn't "allow the user to populate a _table_ of students ... interactively", which can be understood as requiring an actual table element in the DOM. Making an actual table work well for mobile and desktop devices is difficult and will come at the cost of awkward code that uses Javascript to fix layout. This shouldn't be a problem since the requirements of the project can't be met without Javascript anyway, so I won't be worrying about users who don't have Javascript enabled.
+Alternatively, I could design a flexbox layout that mimics a table, but would be ideal on all devices using reponsive flexbox properties - a "real world" solution to our problem. This however wouldn't "allow the user to populate a _table_ of students ... interactively", which can be understood as requiring an actual table element in the DOM. Making an actual table work well for mobile and desktop devices is difficult and comes at the cost of awkward code that uses Javascript to fix layout. This shouldn't be a problem since the requirements of the project can't be met without Javascript anyway, so I won't be worrying about users who don't have Javascript enabled.
+
+## Visual Design
+I chose to use design the webpage following the Material UI design language. Material UI looks minimal and clean, which follows the spirit of the project's requirements: a single simple table.

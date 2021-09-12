@@ -1,58 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSEd Screening</title>
+
+    <!-- Dont -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    <div class="outer-container-main"> 
-    <div class="header-main">Abhi's LupLab Screening Test <br> :)</div>
-    <div class="mid-main">
+    <div class="outer-container-main">
 
-    </div>
+        <div class="header-container">
+            <div class="header-icon"><img src="./lab.svg" alt="Lab icon"></div>
+            <div class="header-title">Abhi's LupLab Screening Test</div>
+            <div class="header-cloud_icon"><img src="./cloud_off.svg" alt="Cloud off icon"></div>
+        </div>
 
-    <div class="footer-main">
-        Footer
-    </div>
+        <div class="mid-main">
+            <div class="table-wrapper">
+                <table id="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Level</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <tr>
+                            <td>
+                                <div class="data" contenteditable="true">name1</div>
+                            </td>
+                            <td>email1</td>
+                            <td>level1</td>
+                        </tr>
+                        <tr>
+                            <td>name2</td>
+                            <td>email2</td>
+                            <td>level2</td>
+                        </tr>
+                        <tr>
+                            <td>name3</td>
+                            <td>email3</td>
+                            <td>level3</td>
+                        </tr>
+                        <tr>
+                            <td>name4</td>
+                            <td>email4</td>
+                            <td>level4</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer-main">
+            Footer
+        </div>
 
 </body>
+
 </html>
 
 <style>
     * {
-        padding:0px;
-        margin:0px;
-
-        font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        padding: 0px;
+        margin: 0px;
+        
+        /* TODO replace with Open Sans */
+        font-family: 'IBM Plex Sans', sans-serif;
     }
+
     /* 
         Main page layout
     */
-    .outer-container-main{
+    .outer-container-main {
         height: 100vh;
         width: 100vw;
 
         display: grid;
         grid-template-rows: auto 1fr auto;
     }
-    .header-main{
-        background-color: black;
+
+    .header-container {
+        background-color: #c1e5e2;
         min-height: 3em;
-        text-align: center;
-    }
-    .mid-main{
-        background-color: yellow;
+        padding-top: 1em;
+        display: flex;
+        align-items: center;
+        border-bottom: #7c9c99f0 solid 1px;
     }
 
-    .footer-main{
-        background-color: lightgreen;
+    .header-icon {
+        /* Lab tube icon */
+        border-radius: 25px;
+        background-color: #e6f4f3;
+
+        width: 50px;
+        height: 50px;
+        margin: -1em 1em 0em 1em;
+        padding: 0px;
+    }
+
+    .header-icon img {
+        margin-top: -2px;
+        height: 100%;
+        width: 100%;
+    }
+
+    .header-title {
+        font-size: 1em;
+        font-weight: 400;
+    }
+
+    .header-cloud_icon img {
+        width: 1em;
+        height: 1em;
+        margin-top: 50%;
+        margin-left: 50%;
+    }
+
+    .mid-main {
+        background-color: #e6f8fb;
+
+        display: grid;
+        place-items: center;
+    }
+
+    .footer-main {
+        background-color: #b2dfdb;
     }
 </style>
 <style>
     /* 
         Table
     */
-    
+    .table-wrapper {
+        margin: 1em 0em;
+        overflow: hidden;
+        border-radius: 0.25em;
+
+        box-shadow: #7c9c9980 0px 10px 10px, #7c9c9980 0px 1px 2px;
+    }
+
+    table {
+        font-size: 1.25em;
+        border-collapse: collapse;
+        color: hsl(175, 25%, 40%)
+    }
+
+    th,
+    td {
+        text-align: left;
+        background-color: white;
+        padding: 0.5em 0.25em;
+        min-width: 20ch;
+        border-bottom: solid 0.5px rgba(134, 134, 134, 0.125);
+    }
+
+    th {
+        font-size: 1em;
+        font-weight: 500;
+    }
+
+    td {
+        font-weight: 400;
+    }
+
+    @media screen and (max-width: 700px) {
+        table {
+            min-width: 70vw;
+            border-spacing: 5px;
+
+        }
+
+        table thead {
+            display: none;
+        }
+
+        table tr,
+        table td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr {
+            border-bottom: solid 0.25em rgba(235, 235, 235, 0.637);
+        }
+
+        table td {
+            display: flex;
+        }
+
+        /* CSS hack to show th left of td on mobile.*/
+        table td::before {
+            content: attr(label);
+            font-weight: bold;
+            min-width: 5ch;
+
+            margin-right: 1em;
+            padding-right: 1em;
+            border-right: 2px solid #e0f2f1;
+
+        }
+    }
+
+    /* Applied when user is editing a td field */
+    .data[contenteditable='true']:focus-visible {
+        background-color: #e6f4f3;
+        min-width: 50%;
+        outline: #7c9c99 auto 1px;
+    }
 </style>
+
+<script>
+    //@ts-check 
+    const table = document.getElementById('table');
+    const t_body = document.getElementById('tbody');
+
+
+
+
+    //#region responsive table hack
+
+    // hack to make table mobile friendly. 'label' attribute is used in css breakpoint
+    // to show table heading on side. Details under Table in design_doc.md. 
+    function setMobileTable(selector) {
+        const tableEl = document.querySelector(selector);
+        const thEls = tableEl.querySelectorAll('thead th');
+        const tdLabels = Array.from(thEls).map(el => el.innerText);
+        tableEl.querySelectorAll('tbody tr').forEach(tr => {
+            Array.from(tr.children).forEach(
+                (td, ndx) => td.setAttribute('label', tdLabels[ndx])
+            );
+        });
+    }
+    setMobileTable("table")
+//#endregion
+</script>
