@@ -28,34 +28,13 @@
                 <table id="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Level</th>
+                            <th class='name'>name</th>
+                            <th class='email'>email</th>
+                            <th class='level'>level</th>
                         </tr>
                     </thead>
                     <tbody id="tbody">
-                        <tr>
-                            <td>
-                                <div class="data" contenteditable="true">name1</div>
-                            </td>
-                            <td>email1</td>
-                            <td>level1</td>
-                        </tr>
-                        <tr>
-                            <td>name2</td>
-                            <td>email2</td>
-                            <td>level2</td>
-                        </tr>
-                        <tr>
-                            <td>name3</td>
-                            <td>email3</td>
-                            <td>level3</td>
-                        </tr>
-                        <tr>
-                            <td>name4</td>
-                            <td>email4</td>
-                            <td>level4</td>
-                        </tr>
+                        <!-- Table rows are dynamically placed here -->
                     </tbody>
                 </table>
             </div>
@@ -73,7 +52,7 @@
     * {
         padding: 0px;
         margin: 0px;
-        
+
         /* TODO replace with Open Sans */
         font-family: 'IBM Plex Sans', sans-serif;
     }
@@ -161,8 +140,17 @@
         text-align: left;
         background-color: white;
         padding: 0.5em 0.25em;
-        min-width: 20ch;
-        border-bottom: solid 0.5px rgba(134, 134, 134, 0.125);
+
+        min-width: 14em;
+        border-bottom: solid 0.5px #c1e5e2
+    }
+
+    .level {
+        min-width: 8em;
+    }
+
+    .name {
+        padding-left: 1em;
     }
 
     th {
@@ -174,11 +162,32 @@
         font-weight: 400;
     }
 
+    tbody>button {
+        font-size: 1em;
+        margin: 0.5em 1em;
+        padding: 0em 1em;
+        border: none;
+        min-width: 2em;
+        height: auto;
+        background-color: #c1e5e2;
+    }
+
+    tbody>button:hover {
+        background-color: #b2dfdb;
+        cursor: pointer;
+    }
+
+    tbody>button:active {
+        transform: scale(0.9);
+        /* Scaling button to 0.98 to its original size */
+        background-color: #b2dfdb;
+        /* Lowering the shadow */
+    }
+
     @media screen and (max-width: 700px) {
         table {
             min-width: 70vw;
             border-spacing: 5px;
-
         }
 
         table thead {
@@ -187,11 +196,15 @@
 
         table tr,
         table td {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e0f2f1;
+        }
+
+        .name {
+            padding-left: 0.25em;
         }
 
         table tr {
-            border-bottom: solid 0.25em rgba(235, 235, 235, 0.637);
+            border-bottom: solid 0.25em #e0f2f1;
         }
 
         table td {
@@ -207,8 +220,14 @@
             margin-right: 1em;
             padding-right: 1em;
             border-right: 2px solid #e0f2f1;
-
         }
+    }
+
+    .data {
+        margin-left: -0.5ch;
+        padding-left: 0.5ch;
+        height: 1.5em;
+        cursor: text;
     }
 
     /* Applied when user is editing a td field */
@@ -217,30 +236,136 @@
         min-width: 50%;
         outline: #7c9c99 auto 1px;
     }
+
+    .data[contenteditable='true']:hover {
+        background-color: #e6f4f3;
+    }
+
+    tr {
+        text-transform: capitalize;
+    }
 </style>
 
 <script>
     //@ts-check 
-    const table = document.getElementById('table');
-    const t_body = document.getElementById('tbody');
+    const table_elm = document.getElementById('table');
+    const t_body_elm = document.getElementById('tbody');
 
+    let isLoggingEnabled = true;
 
+    /**
+     * @typedef {Object} Row - Represents a row in the student info teble.
+     * @property {string} name - name of the student.
+     * @property {string} email - email of the student.
+     * @property {('freshman' | 'sophomore' | 'junior' | 'senior')} level - level of the student.
+     */
 
+    /**
+     * @type{Row[]}
+     */
+    let Table = null;
 
-    //#region responsive table hack
+    /**
+     * Creates a tr (table row) element with content to append to table.
+     * @param row_data {Row} array of text in each td (table data) in resulting tr (table row).
+     * @returns row {HTMLTableRowElement} to be appended to tbody.
+     */
+    function CreateTableRow(row_data) {
+        let row = document.createElement('tr');
 
-    // hack to make table mobile friendly. 'label' attribute is used in css breakpoint
-    // to show table heading on side. Details under Table in design_doc.md. 
-    function setMobileTable(selector) {
-        const tableEl = document.querySelector(selector);
-        const thEls = tableEl.querySelectorAll('thead th');
-        const tdLabels = Array.from(thEls).map(el => el.innerText);
-        tableEl.querySelectorAll('tbody tr').forEach(tr => {
-            Array.from(tr.children).forEach(
-                (td, ndx) => td.setAttribute('label', tdLabels[ndx])
-            );
-        });
+        for (let field in row_data) {
+            let td_element = document.createElement('td');
+            let data = document.createElement('div');
+
+            data.contentEditable = 'true';
+            data.textContent = row_data[field];
+            data.classList.add('data');
+
+            //updates Table structure with every change to the table in DOM.
+            data.oninput = function (ev) {
+                let data_elm = /** @type {HTMLElement} */(ev.target);
+                let new_text = data_elm.textContent;
+                let td = data_elm.parentElement;
+                let row_index = parseInt(td.parentElement.getAttribute('row_index')); //index of td's row in Table
+                let field = td.getAttribute('label');
+
+                if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.textContent);
+
+                Table[row_index][field] = new_text;
+            };
+
+            // Event fires when data loses focus, presumably when user is done typing a field.
+            // Seems like a good time to save Table.
+            data.addEventListener('blur', function () {
+                if (isLoggingEnabled) console.log("call SaveTrigger as data elm is unfocused");
+                SaveTable();
+            })
+
+            td_element.append(data);
+            td_element.setAttribute('label', field);
+            //adds class selectors for cells in a column
+            //i.e. .email to select the second column
+            td_element.classList.add(field);
+
+            row.append(td_element);
+        }
+
+        return row;
     }
-    setMobileTable("table")
-//#endregion
+
+    /**
+     * Saves Table to JSON in LocalStorage
+     */
+    function SaveTable() {
+        if(Table)
+        window.localStorage.setItem('student_table', JSON.stringify(Table));
+    }
+
+    /**
+     * Creates a dynamic from Table.
+     */
+    function RenderTable() {
+        for (let row_index in Table) {
+
+            let row_element = CreateTableRow(Table[row_index]);
+            row_element.setAttribute('row_index', row_index)
+            t_body_elm.append(row_element);
+        }
+
+        let add_row_button = document.createElement('button');
+        add_row_button.textContent = '+';
+        add_row_button.onclick = function () {
+            //TODO
+            console.log("add row button clicked")
+        }
+        t_body_elm.append(add_row_button);
+    }
+
+    let json_table = localStorage.getItem('student_table');
+    try {
+        if(isLoggingEnabled) console.log(json_table);
+
+        if (!json_table || json_table.length < 1) {
+            console.log();('sda')
+            throw 'invalid table'
+        }
+        Table = JSON.parse(json_table);
+        if(isLoggingEnabled) console.log('Loaded existing table: ',(Table));
+
+    }
+    catch (error) { //default values if table doesn't exit or corrupt.
+
+        console.log('creating default table.');
+        Table = [];
+        Table.push({ name: 'name1', email: 'email1', level: 'freshman' });
+        Table.push({ name: 'name2', email: 'email2', level: 'freshman' });
+        Table.push({ name: 'name3', email: 'email3', level: 'freshman' });
+    }
+
+    //saves Table before window unloads
+    window.onbeforeunload = function () {
+        SaveTable();
+    };
+
+    RenderTable();
 </script>
