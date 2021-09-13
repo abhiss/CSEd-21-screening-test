@@ -17,3 +17,6 @@ Alternatively, I could design a flexbox layout that mimics a table, but would be
 
 ## Visual Design
 I chose to use design the webpage following the Material UI design language. Material UI looks minimal and clean, which follows the spirit of the project's requirements: a single simple table.
+
+## Unit Testing 
+Unit testing is good practice and was encouraged for screening tests, but useful testing for webpages usually requires an external library, which is discouraged by the prompt. I think making a set of functions that tests the Javascript functions used in the webpage will be a good compromise.
