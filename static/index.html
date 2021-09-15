@@ -39,7 +39,6 @@
                 </table>
             </div>
         </div>
-
         <div class="footer-main">
             Footer
         </div>
@@ -49,12 +48,26 @@
 </html>
 
 <style>
+    /* Define CSS Variables */
+    :root {
+        --svg-color-filter: invert(61%) sepia(21%) saturate(304%) hue-rotate(125deg) brightness(70%) contrast(89%);
+    }
+
+    @font-face {
+        font-family: 'Urbanist';
+        src: url('Urbanist.ttf');
+        font-weight: 125 950;
+        font-stretch: 75% 125%;
+        font-style: normal;
+    }
+
     * {
         padding: 0px;
         margin: 0px;
 
         /* TODO replace with Open Sans */
-        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: Urbanist, 'IBM Plex Sans', sans-serif;
+        color: hsl(174, 33%, 50%)
     }
 
     /* 
@@ -71,32 +84,35 @@
     .header-container {
         background-color: #c1e5e2;
         min-height: 3em;
-        padding-top: 1em;
+        padding-top: 0.5em;
         display: flex;
         align-items: center;
         border-bottom: #7c9c99f0 solid 1px;
     }
 
+    /* Lab tube icon */
     .header-icon {
-        /* Lab tube icon */
-        border-radius: 25px;
-        background-color: #e6f4f3;
-
-        width: 50px;
-        height: 50px;
-        margin: -1em 1em 0em 1em;
+        width: 2.5em;
+        height: 2.5em;
+        margin: -0.5em 1em 0em 1em;
         padding: 0px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 2.5em;
+        background-color: #e6f4f3;
     }
 
     .header-icon img {
-        margin-top: -2px;
-        height: 100%;
-        width: 100%;
+        margin-top: -0.125em;
+        width: 90%;
+        filter: var(--svg-color-filter);
     }
 
     .header-title {
         font-size: 1em;
-        font-weight: 400;
+        font-weight: 500;
     }
 
     .header-cloud_icon img {
@@ -108,7 +124,6 @@
 
     .mid-main {
         background-color: #e6f8fb;
-
         display: grid;
         place-items: center;
     }
@@ -132,7 +147,7 @@
     table {
         font-size: 1.25em;
         border-collapse: collapse;
-        color: hsl(175, 25%, 40%)
+        z-index: 5;
     }
 
     th,
@@ -142,7 +157,7 @@
         padding: 0.5em 0.25em;
 
         min-width: 14em;
-        border-bottom: solid 0.5px #c1e5e2
+        border-bottom: solid 0.5px #c1e5e2;
     }
 
     .level {
@@ -153,9 +168,11 @@
         padding-left: 1em;
     }
 
+    td::before,
     th {
-        font-size: 1em;
-        font-weight: 500;
+        font-weight: 475;
+        text-transform: capitalize;
+        background-color: rgba(255, 255, 255, 0.50);
     }
 
     td {
@@ -171,6 +188,7 @@
         height: auto;
         background-color: #c1e5e2;
     }
+
 
     tbody>button:hover {
         background-color: #b2dfdb;
@@ -214,11 +232,15 @@
         /* CSS hack to show th left of td on mobile.*/
         table td::before {
             content: attr(label);
-            font-weight: bold;
+            height: 100%;
+            width: 100%;
             min-width: 5ch;
 
+            text-align: center;
+
             margin-right: 1em;
-            padding-right: 1em;
+            padding-right: 0.25em;
+            padding-top: 0.25em;
             border-right: 2px solid #e0f2f1;
         }
     }
@@ -228,21 +250,60 @@
         padding-left: 0.5ch;
         height: 1.5em;
         cursor: text;
+        border: none;
+        border-bottom: #abe9e4 1px solid;
+
+        font-size: inherit;
+        color: inherit;
+        ;
     }
 
     /* Applied when user is editing a td field */
-    .data[contenteditable='true']:focus-visible {
+    .data:focus-visible {
         background-color: #e6f4f3;
         min-width: 50%;
-        outline: #7c9c99 auto 1px;
+        border-radius: 0.25em;
+        box-shadow: rgb(171, 233, 228) 0px 2px 2px;
+        outline: none;
     }
 
-    .data[contenteditable='true']:hover {
+    td:hover .data[contenteditable='true'] {
         background-color: #e6f4f3;
     }
 
-    tr {
+    .level {
         text-transform: capitalize;
+        z-index: 100;
+    }
+
+    tr .delete-row-btn {
+        position: absolute;
+        margin-top: 0.25em;
+        padding: 1em;
+
+        display: block;
+        width: 1em;
+        height: 1em;
+
+        background-color: rgba(0, 0, 0, 0);
+        transform: translateX(-50%) scaleX(0%);
+        transition: 150ms all cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .selected-row .delete-row-btn,
+    tr:hover .delete-row-btn {
+        transform: translateX(0%) scaleX(100%);
+
+        height: 0.125em;
+        width: 0.125em;
+        display: grid;
+        place-items: center;
+
+        background: url(delete.svg) no-repeat center;
+        background-position-x: 40%;
+        background-size: 60%;
+        background-color: #b2dfdb;
+        border-radius: 0em 2em 2em 0em;
     }
 </style>
 
@@ -275,21 +336,21 @@
 
         for (let field in row_data) {
             let td_element = document.createElement('td');
-            let data = document.createElement('div');
+            let data = document.createElement('input');
 
             data.contentEditable = 'true';
-            data.textContent = row_data[field];
+            data.value = row_data[field];
             data.classList.add('data');
 
             //updates Table structure with every change to the table in DOM.
             data.oninput = function (ev) {
-                let data_elm = /** @type {HTMLElement} */(ev.target);
-                let new_text = data_elm.textContent;
+                let data_elm = /** @type {HTMLInputElement} */(ev.target);
+                let new_text = data_elm.value;
                 let td = data_elm.parentElement;
                 let row_index = parseInt(td.parentElement.getAttribute('row_index')); //index of td's row in Table
                 let field = td.getAttribute('label');
 
-                if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.textContent);
+                if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.value);
 
                 Table[row_index][field] = new_text;
             };
@@ -309,7 +370,28 @@
 
             row.append(td_element);
         }
+        row.addEventListener('focusin', function (ev) {
+            let elm = /**@type {HTMLTableRowElement} */(ev.currentTarget);
+            elm.classList.add('selected-row');
+        });
 
+        row.addEventListener('focusout', function (ev) {
+            let elm = /**@type {HTMLTableRowElement} */(ev.currentTarget);
+            elm.classList.remove('selected-row');
+        })
+
+        let delete_btn = document.createElement("div");
+
+        delete_btn.classList.add('delete-row-btn');
+        delete_btn.onmousedown = function (ev) {
+            let elm = /**@type{HTMLDivElement}*/(ev.currentTarget);
+            let row_index = parseInt(elm.parentElement.getAttribute('row_index'));
+            Table.splice(row_index, 1);
+            RenderTable();
+        }
+
+
+        row.append(delete_btn);
         return row;
     }
 
@@ -317,14 +399,18 @@
      * Saves Table to JSON in LocalStorage
      */
     function SaveTable() {
-        if(Table)
-        window.localStorage.setItem('student_table', JSON.stringify(Table));
+        if (Table) {
+            window.localStorage.setItem('student_table', JSON.stringify(Table));
+        }
+        else window.localStorage.remove('student_table');
     }
 
     /**
      * Creates a dynamic from Table.
      */
     function RenderTable() {
+        t_body_elm.replaceChildren(''); //remove everything from table
+
         for (let row_index in Table) {
 
             let row_element = CreateTableRow(Table[row_index]);
@@ -335,22 +421,28 @@
         let add_row_button = document.createElement('button');
         add_row_button.textContent = '+';
         add_row_button.onclick = function () {
-            //TODO
-            console.log("add row button clicked")
+            if (isLoggingEnabled) console.log("add row button clicked");
+
+            /** @type {Row} */
+            let new_row = { name: '', email: '', level: 'freshman' }
+
+            let new_row_elm = CreateTableRow(new_row);
+            Table.push(new_row);
+            RenderTable();
         }
         t_body_elm.append(add_row_button);
     }
 
     let json_table = localStorage.getItem('student_table');
     try {
-        if(isLoggingEnabled) console.log(json_table);
+        if (isLoggingEnabled) console.log(json_table);
 
         if (!json_table || json_table.length < 1) {
-            console.log();('sda')
+            console.log(); ('sda')
             throw 'invalid table'
         }
         Table = JSON.parse(json_table);
-        if(isLoggingEnabled) console.log('Loaded existing table: ',(Table));
+        if (isLoggingEnabled) console.log('Loaded existing table: ', (Table));
 
     }
     catch (error) { //default values if table doesn't exit or corrupt.
