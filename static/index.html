@@ -71,7 +71,7 @@
     }
 
     html,
-    body, 
+    body,
     .outer-container-main {
         max-width: 100%;
         overflow-x: hidden;
@@ -304,6 +304,10 @@
             width: 10em;
         }
 
+        .delete-row-btn {
+            top:25vh
+        }
+
         /* CSS hack to show th left of td on mobile.*/
         table td::before {
             content: attr(label);
@@ -326,7 +330,7 @@
     const table_elm = document.getElementById('table');
     const t_body_elm = document.getElementById('tbody');
 
-    let isLoggingEnabled = true;
+    let isLoggingEnabled = false;
 
     /**
      * @typedef {Object} Row - Represents a row in the student info teble.
