@@ -70,6 +70,13 @@
         color: hsl(174, 33%, 50%)
     }
 
+    html,
+    body, 
+    .outer-container-main {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
     /* 
         Main page layout
     */
@@ -120,6 +127,8 @@
         height: 1em;
         margin-top: 50%;
         margin-left: 50%;
+
+        filter: var(--svg-color-filter);
     }
 
     .mid-main {
@@ -202,50 +211,8 @@
         /* Lowering the shadow */
     }
 
-    @media screen and (max-width: 700px) {
-        table {
-            min-width: 70vw;
-            border-spacing: 5px;
-        }
-
-        table thead {
-            display: none;
-        }
-
-        table tr,
-        table td {
-            border-bottom: 1px solid #e0f2f1;
-        }
-
-        .name {
-            padding-left: 0.25em;
-        }
-
-        table tr {
-            border-bottom: solid 0.25em #e0f2f1;
-        }
-
-        table td {
-            display: flex;
-        }
-
-        /* CSS hack to show th left of td on mobile.*/
-        table td::before {
-            content: attr(label);
-            height: 100%;
-            width: 100%;
-            min-width: 5ch;
-
-            text-align: center;
-
-            margin-right: 1em;
-            padding-right: 0.25em;
-            padding-top: 0.25em;
-            border-right: 2px solid #e0f2f1;
-        }
-    }
-
-    .data {
+    /* aka .data elements */
+    tr input {
         margin-left: -0.5ch;
         padding-left: 0.5ch;
         height: 1.5em;
@@ -255,13 +222,13 @@
 
         font-size: inherit;
         color: inherit;
-        ;
+
+        width: fit-content;
     }
 
     /* Applied when user is editing a td field */
     .data:focus-visible {
         background-color: #e6f4f3;
-        min-width: 50%;
         border-radius: 0.25em;
         box-shadow: rgb(171, 233, 228) 0px 2px 2px;
         outline: none;
@@ -304,6 +271,53 @@
         background-size: 60%;
         background-color: #b2dfdb;
         border-radius: 0em 2em 2em 0em;
+    }
+
+    @media screen and (max-width: 700px) {
+        table {
+            min-width: 70vw;
+            border-spacing: 5px;
+        }
+
+        table thead {
+            display: none;
+        }
+
+        table tr,
+        table td {
+            border-bottom: 1px solid #e0f2f1;
+        }
+
+        .name {
+            padding-left: 0.25em;
+        }
+
+        table tr {
+            border-bottom: solid 0.25em #e0f2f1;
+        }
+
+        table td {
+            display: flex;
+        }
+
+        tr input {
+            width: 10em;
+        }
+
+        /* CSS hack to show th left of td on mobile.*/
+        table td::before {
+            content: attr(label);
+            height: 100%;
+            width: 100%;
+            min-width: 5ch;
+
+            text-align: center;
+
+            margin-right: 1em;
+            padding-right: 0.25em;
+            padding-top: 0.25em;
+            border-right: 2px solid #e0f2f1;
+        }
     }
 </style>
 
