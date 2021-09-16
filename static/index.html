@@ -310,9 +310,13 @@
             width: 10em;
         }
 
+        .selected-row,
+        tr:hover {
+            transform: translateX(0.1%);
+        }
+
         .delete-row-btn {
-            top: 20vh;
-            left: 0px;
+            top: 0em;
             display: block;
         }
 
@@ -334,10 +338,10 @@
 </style>
 
 <script>
-    //@ts-check 
+    //@ts-check
     const table_elm = document.getElementById('table');
     const t_body_elm = document.getElementById('tbody');
-
+    
     let isLoggingEnabled = true;
 
     /**
@@ -368,8 +372,11 @@
             data.value = row_data[field];
             data.classList.add('data');
 
-            if(isLoggingEnabled) console.log('CreateTableRow content-field: ', row_data[field], field, validateUserInput(row_data[field], field));
-            //validate user input
+            if (isLoggingEnabled) {
+                console.log('CreateTableRow content-field: ', row_data[field], field, validateUserInput(row_data[field], field));
+            }
+
+            //validate user input when creating field
             if (!validateUserInput(row_data[field], field)) {
                 data.classList.add('invalid')
             }
@@ -377,20 +384,32 @@
             //updates Table structure with every change to the table in DOM.
             data.oninput = function onInput(ev) {
                 let data_elm = /** @type {HTMLInputElement} */(ev.target);
-                let new_text = data_elm.value;
                 let td = data_elm.parentElement;
                 let row_index = parseInt(td.parentElement.getAttribute('row_index')); //index of td's row in Table
                 let field = td.getAttribute('label');
+                let prev_value = data_elm.getAttribute('prev_value');
+                data_elm.setAttribute('prev_value', data_elm.value);
 
-                if (!validateUserInput(new_text, field)) {
-                   if(!data_elm.classList.contains('invalid')) data_elm.classList.add('invalid')
+                if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.value);
+
+
+                let try_autocomplete = data_elm.value.length <= Table[row_index][field].length;
+
+
+                if (field == 'level' && !try_autocomplete) {
+                    data_elm.value = data_elm.value.toLowerCase();
+                    if (data_elm.value.startsWith('f')) data_elm.value = 'freshman';
+                    else if (data_elm.value.startsWith('so')) data_elm.value = 'sophomore';
+                    else if (data_elm.value.startsWith('j')) data_elm.value = 'junior';
+                    else if (data_elm.value.startsWith('se')) data_elm.value = 'senior';
+                }
+                if (!validateUserInput(data_elm.value, field)) {
+                    if (!data_elm.classList.contains('invalid')) { data_elm.classList.add('invalid') }
                 } else {
                     data_elm.classList.remove('invalid');
                 }
 
-                if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.value);
-
-                Table[row_index][field] = new_text;
+                Table[row_index][field] = data_elm.value;
             };
 
             // Event fires when data loses focus, presumably when user is done typing a field.
@@ -427,7 +446,6 @@
             Table.splice(row_index, 1);
             RenderTable();
         }
-
 
         row.append(delete_btn);
         return row;
