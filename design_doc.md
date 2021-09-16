@@ -15,6 +15,11 @@ The table is a major part of this project, so it required some thought. This pro
 
 Alternatively, I could design a flexbox layout that mimics a table, but would be ideal on all devices using reponsive flexbox properties - a "real world" solution to our problem. This however wouldn't "allow the user to populate a _table_ of students ... interactively", which can be understood as requiring an actual table element in the DOM. Making an actual table work well for mobile and desktop devices is difficult and comes at the cost of awkward code that uses Javascript to fix layout. This shouldn't be a problem since the requirements of the project can't be met without Javascript anyway, so I won't be worrying about users who don't have Javascript enabled.
 
+## Storage
+Having a user editable data table needs persisting storage to be useful. The browser's LocalStorage API was a great fit for this project because it's simple to use and well supported across browsers. Using LocalStorage, the data is persisted if the tab is closed or the device is restarted, but not if the user opens the website on a different device. It's also automatically saved throughout an editing session, specially when the user finishes entering a new field and once when the page is closing as a fallback. This solution feels quite elegant.
+
+In relation to user input validation, a desired behavior might be to not allow the user to save if there are format mistakes. I think this is unintuitive and a user might lose data if they don't realize only correctly formatted tables can be saved. Becuase of this, the table is still automatically saved, but rows containing incorrectly formatted entries won't be exported. The invalid input is also highlighted red. 
+
 ## Visual Design
 I chose to use design the webpage following the Material UI design language. Material UI looks minimal and clean, which follows the spirit of the project's requirements: a single simple table.
 

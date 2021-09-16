@@ -146,7 +146,7 @@
         Table
     */
     .table-wrapper {
-        margin: 1em 0em;
+        margin: 0.5em;
         overflow: hidden;
         border-radius: 0.25em;
 
@@ -165,7 +165,6 @@
         background-color: white;
         padding: 0.5em 0.25em;
 
-        min-width: 14em;
         border-bottom: solid 0.5px #c1e5e2;
     }
 
@@ -212,18 +211,17 @@
     }
 
     /* aka .data elements */
-    tr input {
+    .data {
         margin-left: -0.5ch;
         padding-left: 0.5ch;
         height: 1.5em;
         cursor: text;
         border: none;
-        border-bottom: #abe9e4 1px solid;
+        border-bottom: #abe9e4 0.1px;
+        border-radius: 0.25em;
 
         font-size: inherit;
         color: inherit;
-
-        width: fit-content;
     }
 
     /* Applied when user is editing a td field */
@@ -234,13 +232,20 @@
         outline: none;
     }
 
+    .data.invalid {
+        background-color: rgba(185, 0, 0, 0.40) !important;
+        box-shadow: rgba(185, 0, 0, 0.404) 0px 2px 2px;
+        color: white;
+    }
+
     td:hover .data[contenteditable='true'] {
         background-color: #e6f4f3;
     }
 
-    .level {
+    .level .data {
         text-transform: capitalize;
         z-index: 100;
+        width: 7em;
     }
 
     tr .delete-row-btn {
@@ -252,19 +257,20 @@
         width: 1em;
         height: 1em;
 
+        cursor: pointer;
         background-color: rgba(0, 0, 0, 0);
         transform: translateX(-50%) scaleX(0%);
         transition: 150ms all cubic-bezier(0.77, 0, 0.175, 1);
     }
 
     .selected-row .delete-row-btn,
-    tr:hover .delete-row-btn {
+    tr:hover .delete-row-btn,
+    tr:focus-visible .delete-row-btn {
         transform: translateX(0%) scaleX(100%);
+        position: absolute;
 
         height: 0.125em;
         width: 0.125em;
-        display: grid;
-        place-items: center;
 
         background: url(delete.svg) no-repeat center;
         background-position-x: 40%;
@@ -305,7 +311,9 @@
         }
 
         .delete-row-btn {
-            top:25vh
+            top: 20vh;
+            left: 0px;
+            display: block;
         }
 
         /* CSS hack to show th left of td on mobile.*/
@@ -330,7 +338,7 @@
     const table_elm = document.getElementById('table');
     const t_body_elm = document.getElementById('tbody');
 
-    let isLoggingEnabled = false;
+    let isLoggingEnabled = true;
 
     /**
      * @typedef {Object} Row - Represents a row in the student info teble.
@@ -360,13 +368,25 @@
             data.value = row_data[field];
             data.classList.add('data');
 
+            if(isLoggingEnabled) console.log('CreateTableRow content-field: ', row_data[field], field, validateUserInput(row_data[field], field));
+            //validate user input
+            if (!validateUserInput(row_data[field], field)) {
+                data.classList.add('invalid')
+            }
+
             //updates Table structure with every change to the table in DOM.
-            data.oninput = function (ev) {
+            data.oninput = function onInput(ev) {
                 let data_elm = /** @type {HTMLInputElement} */(ev.target);
                 let new_text = data_elm.value;
                 let td = data_elm.parentElement;
                 let row_index = parseInt(td.parentElement.getAttribute('row_index')); //index of td's row in Table
                 let field = td.getAttribute('label');
+
+                if (!validateUserInput(new_text, field)) {
+                   if(!data_elm.classList.contains('invalid')) data_elm.classList.add('invalid')
+                } else {
+                    data_elm.classList.remove('invalid');
+                }
 
                 if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.value);
 
@@ -449,6 +469,36 @@
             RenderTable();
         }
         t_body_elm.append(add_row_button);
+    }
+
+    /**
+     * Validates user input
+     * @param input {string}
+     * @param field {string}
+     * @returns valid {bool} if the input was valid for the type of field.
+     */
+    function validateUserInput(input, field) {
+        let is_name = field == ('name');
+        let is_email = field == ('email');
+        let is_level = field == ('level');
+
+        if (!(is_name || is_email || is_level)) return false; //check field is valid.
+        let valid = true;
+        if (is_name) {
+            valid = !!input.match(/.+/);
+        }
+        else if (is_email) {
+            valid = !!input.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/);
+
+        }
+        else if (is_level) {
+            valid = (input.toLowerCase() == 'freshman' ||
+                input.toLowerCase() == 'sophomore' ||
+                input.toLowerCase() == 'junior' ||
+                input.toLowerCase() == 'senior');
+        }
+
+        return valid;
     }
 
     let json_table = localStorage.getItem('student_table');
