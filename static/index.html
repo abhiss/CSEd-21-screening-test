@@ -10,15 +10,14 @@
     <!-- Dont -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div class="outer-container-main">
 
         <div class="header-container">
-            <div class="header-icon"><img src="./lab.svg" alt="Lab icon"></div>
+            <div id="header-icon" class="pulse"><img src="./lab.svg" alt="Lab icon"></div>
             <div class="header-title">Abhi's LupLab Screening Test</div>
             <div class="header-cloud_icon"><img src="./cloud_off.svg" alt="Cloud off icon"></div>
         </div>
@@ -42,6 +41,13 @@
         <div class="footer-main">
             Footer
         </div>
+        <div id="options" class='hide'>
+            <div id="export-json">Export JSON</div>
+            <div id="import-json">Import JSON</div>
+        </div>
+
+        <!-- Required to download files for Export JSON -->
+        <a id="download_empty_elm" style="display:none"></a>
 
 </body>
 
@@ -70,6 +76,12 @@
         color: hsl(174, 33%, 50%)
     }
 
+    ::selection,
+    ::-moz-selection {
+        background: #ffb7b7;
+        /* WebKit/Blink Browsers */
+    }
+
     html,
     body,
     .outer-container-main {
@@ -95,10 +107,13 @@
         display: flex;
         align-items: center;
         border-bottom: #7c9c99f0 solid 1px;
+
+        z-index: 10;
     }
 
     /* Lab tube icon */
-    .header-icon {
+    #header-icon {
+        user-select: none;
         width: 2.5em;
         height: 2.5em;
         margin: -0.5em 1em 0em 1em;
@@ -109,12 +124,27 @@
 
         border-radius: 2.5em;
         background-color: #e6f4f3;
+        cursor: pointer;
+
     }
 
-    .header-icon img {
+    #header-icon img {
         margin-top: -0.125em;
         width: 90%;
-        filter: var(--svg-color-filter);
+    }
+
+    .pulse {
+        animation: pulse 500ms infinite alternate-reverse;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(105%, 105%);
+        }
+
+        100% {
+            transform: scale(90%, 90%);
+        }
     }
 
     .header-title {
@@ -139,6 +169,37 @@
 
     .footer-main {
         background-color: #b2dfdb;
+    }
+
+    #options {
+        position: absolute;
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 0.5em;
+        top: 3.5em;
+        padding: 1em;
+
+        background-color: #c1e5e2;
+        border-radius: 0.25em;
+        box-shadow: #7c9c9980 0px 10px 10px, #7c9c9980 0px 1px 2px;
+
+        transition: 300ms all cubic-bezier(0.23, 1, 0.320, 1);
+
+    }
+
+    .hide {
+        transform: translateY(-150%);
+    }
+
+    #options div {
+        background-color: #e0f2f1;
+        height: 1em;
+        width: max-content;
+        text-align: center;
+        padding: 2px;
+
+        cursor: pointer;
+        border: white 1px solid;
     }
 </style>
 <style>
@@ -332,7 +393,7 @@
             padding: 1em;
 
             margin-left: -10em;
-            
+
             margin-bottom: -2em;
             height: 0.125em;
             width: 0.125em;
@@ -379,9 +440,10 @@
 
 <script>
     //@ts-check
-    const table_elm = document.getElementById('table');
-    const t_body_elm = document.getElementById('tbody');
 
+    /** Table Body - To which rows are appended. */
+    const t_body_elm = document.getElementById('tbody');
+    const lab_icon_elm = document.getElementById('header-icon');
     let isLoggingEnabled = true;
 
     /**
@@ -557,7 +619,7 @@
             valid = !!input.match(/.+/);
         }
         else if (is_email) {
-            valid = !!input.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/);
+            valid = !!input.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w+)+$/);
 
         }
         else if (is_level) {
@@ -570,6 +632,85 @@
         return valid;
     }
 
+    /**
+     * Returns true is object is a valid table.
+     * @param maybe_table {object[]} - Object suspected of being a table.
+     * @returns { boolean } - True is object is a valid table. 
+     */
+    function validateTableObject(maybe_table) {
+        let _maybe_table = /**@type Row[]*/(maybe_table);
+
+        for (let row of _maybe_table) {
+            if (row.email == null || row.level == null || row.name == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    lab_icon_elm.onclick = function (ev) {
+        //toggle options
+        const opts_elm = document.getElementById('options');
+        if (opts_elm.classList.contains('hide')) {
+            opts_elm.classList.remove('hide');
+            lab_icon_elm.classList.remove('pulse');
+            setTimeout(() => {
+                lab_icon_elm.classList.add('pulse');
+            }, 10_000);
+
+        } else {
+            opts_elm.classList.add('hide');
+        }
+    }
+
+    document.getElementById('export-json').onclick = function (ev) {
+
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Table));
+        let dl_elm = document.getElementById('download_empty_elm');
+        dl_elm.setAttribute("href", dataStr);
+        dl_elm.setAttribute("download", "table.json");
+        dl_elm.click();
+    }
+
+    document.getElementById('import-json').onclick = function (ev) {
+
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json'
+        input.onchange = e => {
+
+            // getting a hold of the file reference
+            let file = /**@type{HTMLInputElement}*/(e.target).files[0];
+
+            // setting up the reader
+            let reader = new FileReader();
+            reader.readAsText(file, 'UTF-8');
+
+            // here we tell the reader what to do when it's done reading...
+            reader.onload = readerEvent => {
+                let content = /**@type {string}*/(readerEvent.target.result); // this is the content!
+                try {
+                    let maybe_table = JSON.parse(content);
+                    if (validateTableObject(maybe_table)) {
+                        Table = maybe_table;
+                        RenderTable();
+                    } else {
+                        alert("The imported table is not of the correct format.")
+                    }
+                }
+                catch {
+                    console.log('JSON.parse failed.');
+                    alert('Failed to parse imported table.')
+                }
+                console.log(content);
+            }
+        }
+        input.click();
+        input.remove();
+    }
+
+
+    // get data from localstorage and update table
     let json_table = localStorage.getItem('student_table');
     try {
         if (isLoggingEnabled) console.log(json_table);
@@ -578,13 +719,16 @@
             console.log(); ('sda')
             throw 'invalid table'
         }
-        Table = JSON.parse(json_table);
+        let temp_table = JSON.parse(json_table);
+        if (validateTableObject(temp_table)) {
+            Table = temp_table;
+        }
         if (isLoggingEnabled) console.log('Loaded existing table: ', (Table));
-
     }
+
     catch (error) { //default values if table doesn't exit or corrupt.
 
-        console.log('creating default table.');
+        console.log('Creating new table. Error: ' + error);
         Table = [];
         Table.push({ name: 'name1', email: 'email1', level: 'freshman' });
         Table.push({ name: 'name2', email: 'email2', level: 'freshman' });
