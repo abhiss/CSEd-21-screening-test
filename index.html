@@ -76,10 +76,14 @@
         color: hsl(174, 33%, 50%)
     }
 
-    ::selection,
     ::-moz-selection {
-        background: #ffb7b7;
-        /* WebKit/Blink Browsers */
+        background-color: #90dfd8;
+        color: white;
+    }
+
+    ::selection {
+        background-color: #90dfd8;
+        color: white;
     }
 
     html,
@@ -157,7 +161,7 @@
         height: 1em;
         margin-top: 50%;
         margin-left: 50%;
-
+        user-select: none;
         filter: var(--svg-color-filter);
     }
 
