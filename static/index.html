@@ -180,7 +180,7 @@
     th {
         font-weight: 475;
         text-transform: capitalize;
-        background-color: rgba(255, 255, 255, 0.50);
+        padding: rgba(255, 255, 255, 0.50);
     }
 
     td {
@@ -250,44 +250,48 @@
         text-transform: capitalize;
     }
 
-    tr .delete-row-btn {
-        position: absolute;
-        margin-top: 0.25em;
-        padding: 1em;
 
-        display: block;
-        width: 1em;
-        height: 1em;
 
-        cursor: pointer;
-        background-color: rgba(0, 0, 0, 0);
-        transform: translateX(-50%) scaleX(0%);
-        transition: 150ms all cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: rgb(134, 185, 181) 0px 2px 2px;
-    }
-
-    .selected-row .delete-row-btn,
-    tr:hover .delete-row-btn,
-    tr:focus-visible .delete-row-btn {
-        transform: translateX(0%) scaleX(100%);
-        position: absolute;
-
-        height: 0.125em;
-        width: 0.125em;
-
-        background: url(delete.svg) no-repeat center;
-        background-position-x: 40%;
-        background-size: 60%;
-        background-color: #b2dfdb;
-        border-radius: 0em 2em 2em 0em;
-    }
-
+    /* specific to wide screens */
     @media screen and (min-width: 700px) {
         .level .data {
-            width: 7em;
+            width: 6em;
+            margin-right: 1em;
+        }
+
+        tr .delete-row-btn {
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.25em;
+            padding: 1em;
+            margin-left: -2.125em;
+
+            height: 0.125em;
+            width: 0.125em;
+
+            display: block;
+
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0);
+            transform: translateX(100%) scaleX(0%);
+            transition: 150ms all cubic-bezier(0.77, 0, 0.175, 1);
+            box-shadow: rgb(134, 185, 181) 0px 2px 2px;
+        }
+
+        .selected-row .delete-row-btn,
+        tr:hover .delete-row-btn,
+        tr:focus-visible .delete-row-btn {
+            transform: translateX(0%) scaleX(100%);
+
+            background: url(delete.svg) no-repeat center;
+            background-position-x: 70%;
+            background-size: 70%;
+            background-color: #b2dfdb;
+            border-radius: 2em 0em 0em 2em;
         }
     }
 
+    /* specific to narrow screens */
     @media screen and (max-width: 700px) {
         table {
             min-width: 70vw;
@@ -315,20 +319,45 @@
             display: flex;
         }
 
-        tr input {
-            width: 10em;
-        }
-
-
-
         .selected-row,
         tr:hover {
-            transform: translateX(0.1%);
+            box-shadow: rgb(171, 233, 228) 0px 2px 2px;
+            transform: scaleX(100em)
         }
 
-        .delete-row-btn {
-            top: 0em;
+        tr .delete-row-btn {
+            overflow: hidden;
+            position: static;
+            margin-top: 0.25em;
+            padding: 1em;
+
+            margin-left: -10em;
+            
+            margin-bottom: -2em;
+            height: 0.125em;
+            width: 0.125em;
+
             display: block;
+
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0);
+            transform: translateX(-100%) scaleX(0%);
+            transition: 150ms all cubic-bezier(0.77, 0, 0.175, 1);
+            box-shadow: rgb(134, 185, 181) 0px 2px 2px;
+        }
+
+        .selected-row .delete-row-btn,
+        tr:hover .delete-row-btn,
+        tr:focus-visible .delete-row-btn {
+            transform: translateX(0%) translateY(-350%) scaleX(100%);
+            margin-left: 0em;
+
+
+            background: url(delete.svg) no-repeat center;
+            background-position-x: 40%;
+            background-size: 60%;
+            background-color: #b2dfdb;
+            border-radius: 0em 2em 2em 0em;
         }
 
         /* CSS hack to show th left of td on mobile.*/
