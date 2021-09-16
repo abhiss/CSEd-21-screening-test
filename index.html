@@ -17,9 +17,9 @@
     <div class="outer-container-main">
 
         <div class="header-container">
-            <div id="header-icon" class="pulse"><img src="./lab.svg" alt="Lab icon"></div>
+            <div id="header-icon" class="pulse"><img src="./static/lab.svg" alt="Lab icon"></div>
             <div class="header-title">Abhi's LupLab Screening Test</div>
-            <div class="header-cloud_icon"><img src="./cloud_off.svg" alt="Cloud off icon"></div>
+            <div class="header-cloud_icon"><img src="./static/cloud_off.svg" alt="Cloud off icon"></div>
         </div>
 
         <div class="mid-main">
@@ -61,7 +61,7 @@
 
     @font-face {
         font-family: 'Urbanist';
-        src: url('Urbanist.ttf');
+        src: url('./static/Urbanist.ttf');
         font-weight: 125 950;
         font-stretch: 75% 125%;
         font-style: normal;
@@ -344,7 +344,7 @@
         tr:focus-visible .delete-row-btn {
             transform: translateX(0%) scaleX(100%);
 
-            background: url(delete.svg) no-repeat center;
+            background: url(./static/delete.svg) no-repeat center;
             background-position-x: 70%;
             background-size: 70%;
             background-color: #b2dfdb;
@@ -414,7 +414,7 @@
             margin-left: 0em;
 
 
-            background: url(delete.svg) no-repeat center;
+            background: url(./static/delete.svg) no-repeat center;
             background-position-x: 40%;
             background-size: 60%;
             background-color: #b2dfdb;
@@ -640,6 +640,8 @@
     function validateTableObject(maybe_table) {
         let _maybe_table = /**@type Row[]*/(maybe_table);
 
+        if (_maybe_table.length < 1) { return false };
+
         for (let row of _maybe_table) {
             if (row.email == null || row.level == null || row.name == null) {
                 return false;
@@ -713,26 +715,24 @@
     // get data from localstorage and update table
     let json_table = localStorage.getItem('student_table');
     try {
-        if (isLoggingEnabled) console.log(json_table);
+        let temp_table = JSON.parse(json_table);
 
-        if (!json_table || json_table.length < 1) {
-            console.log(); ('sda')
+        if (!json_table || json_table.length < 1 || !validateTableObject(temp_table)) {
+            console.log();
             throw 'invalid table'
         }
-        let temp_table = JSON.parse(json_table);
-        if (validateTableObject(temp_table)) {
+        else {
             Table = temp_table;
+            if (isLoggingEnabled) console.log('Loaded existing table: ', (Table));
         }
-        if (isLoggingEnabled) console.log('Loaded existing table: ', (Table));
     }
-
     catch (error) { //default values if table doesn't exit or corrupt.
 
         console.log('Creating new table. Error: ' + error);
         Table = [];
-        Table.push({ name: 'name1', email: 'email1', level: 'freshman' });
-        Table.push({ name: 'name2', email: 'email2', level: 'freshman' });
-        Table.push({ name: 'name3', email: 'email3', level: 'freshman' });
+        Table.push({ name: 'Abhi', email: 'abso@ucdavis.edu', level: 'junior' });
+        Table.push({ name: 'John Johnson', email: 'jojo@gmail.com', level: 'freshman' });
+        Table.push({ name: 'Jeffery Jefferson', email: 'jeje@outlook.com', level: 'senior' });
     }
 
     //saves Table before window unloads
