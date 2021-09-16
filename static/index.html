@@ -346,7 +346,7 @@
     //@ts-check
     const table_elm = document.getElementById('table');
     const t_body_elm = document.getElementById('tbody');
-    
+
     let isLoggingEnabled = true;
 
     /**
@@ -360,6 +360,12 @@
      * @type{Row[]}
      */
     let Table = null;
+
+    let format_details = {
+        name: 'Name field must have atleast 1 character.',
+        email: 'Email field must be of the format username@domain,\nwhere the tld is atleast 2 characters.',
+        level: 'Level must be freshman, sophomore, junior, or senior.'
+    }
 
     /**
      * Creates a tr (table row) element with content to append to table.
@@ -383,7 +389,9 @@
 
             //validate user input when creating field
             if (!validateUserInput(row_data[field], field)) {
-                data.classList.add('invalid')
+                data.classList.add('invalid');
+                let err_detail = format_details[field];
+                data.setAttribute('title', `Format is invalid:\n${err_detail}`);
             }
 
             //updates Table structure with every change to the table in DOM.
@@ -397,9 +405,7 @@
 
                 if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.value);
 
-
                 let try_autocomplete = data_elm.value.length <= Table[row_index][field].length;
-
 
                 if (field == 'level' && !try_autocomplete) {
                     data_elm.value = data_elm.value.toLowerCase();
@@ -409,9 +415,14 @@
                     else if (data_elm.value.startsWith('se')) data_elm.value = 'senior';
                 }
                 if (!validateUserInput(data_elm.value, field)) {
-                    if (!data_elm.classList.contains('invalid')) { data_elm.classList.add('invalid') }
+                    if (!data_elm.classList.contains('invalid')) {
+                        data_elm.classList.add('invalid');
+                        let err_detail = format_details[field];
+                        data.setAttribute('title', `Format is invalid:\n${err_detail}`);
+                    }
                 } else {
                     data_elm.classList.remove('invalid');
+                    data.removeAttribute('title');
                 }
 
                 Table[row_index][field] = data_elm.value;
