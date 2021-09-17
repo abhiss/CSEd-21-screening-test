@@ -3,11 +3,12 @@ A screening test for working on a LupLab research project with Professor Porquet
 
 ## 🥳Live Demo: https://abhiss.github.io/CSEd-21-screening-test/
 
+![Website Screenshot](https://cdn.discordapp.com/attachments/661330929985257535/888331826731548692/unknown.png)
+
 ## Prompt
  - Write a web page containing a Javascript widget that allows the user to populate a table of students (name, email, level) interactively. The level field should be one of “freshman/sophomore/junior/senior”. It should be also possible to edit any line of the table (not necessarily inside the table itself though -- up to you). Your code should make sure that fields are validated before the input is inserted in the table.
 
  - Code that doesn’t rely on external libraries is strongly encouraged. Ideally, it should be all self-contained.
-
 
 # Design decisions
 
@@ -17,9 +18,11 @@ The design decisions I make for this project are guided only by the prompt above
 ## Table
 The table is a major part of this project, so it required some thought. This project targets the web, so in that spirit this project values accesibility. Traditional HTML tables are typically well understood by screenreaders and well supported across browsers, but are often hostile to users on mobile devices. A very different layout is expected on phones compared to desktops. Desktop users expect a layout akin to a spreadsheet, where the data for each object is spread across a row. Obviously, spreading data across a row doesn't make sense on a narrow phone.
 
-[IMAGE SHOWING IDEAL PHONE LAYOUT VS IDEAL DESKTOP LAYOUT]
-
 Alternatively, I could design a flexbox layout that mimics a table, but would be ideal on all devices using reponsive flexbox properties - a "real world" solution to our problem. This however wouldn't "allow the user to populate a _table_ of students ... interactively", which can be understood as requiring an actual table element in the DOM. Making an actual table work well for mobile and desktop devices is difficult and comes at the cost of awkward code that uses Javascript to fix layout. This shouldn't be a problem since the requirements of the project can't be met without Javascript anyway, so I won't be worrying about users who don't have Javascript enabled.
+
+This is what the current mobile layout looks like: 
+
+![Screenshot mobile layout](https://cdn.discordapp.com/attachments/661330929985257535/888332217573580810/unknown.png)
 
 ## Storage
 Having a user editable data table needs persisting storage to be useful. The browser's LocalStorage API was a great fit for this project because it's simple to use and well supported across browsers. Using LocalStorage, the data is persisted if the tab is closed or the device is restarted, but not if the user opens the website on a different device. It's also automatically saved throughout an editing session, specially when the user finishes entering a new field and once when the page is closing as a fallback. This solution feels quite elegant.
@@ -30,4 +33,8 @@ In relation to user input validation, a desired behavior might be to not allow t
 I chose to use design the webpage following the Material UI design language. Material UI looks minimal and clean, which follows the spirit of the project's requirements: a single simple table.
 
 ## Testing
-Automated testing gives us a fighting chance at writing correct software. I was initally planning to not have automated tests since most webpage testing involves big frameworks like cypress.io or puppeteer, which would clearly go against the spirit of the prompt which suggests avoiding libraries and frameworks. I had some time to experiment with writing automated tests without the frameworks I'd normally use, and it worked surprisingly well! So I wrote an automated test runner with accompanying integration test in [test.js](./test.js). It's completely self contained and the tests are run in the browser by opening the web page calling the `TestRunner()` function in the console. 
+Automated testing gives us a fighting chance at writing correct software. I was initally planning to not have automated tests since most webpage testing involves big frameworks like cypress.io or puppeteer, which would clearly go against the spirit of the prompt which suggests avoiding libraries and frameworks. I had some time to experiment with writing automated tests without the frameworks I'd normally use, and it worked surprisingly well! So I wrote an automated test runner with accompanying integration test in [test.js](./test.js). It's completely self contained and the tests are run in the browser by opening the web page calling the `TestRunner()` function in the console.
+
+I suggest you try running it in the live linked above, it's quite satisfying. If not, here's a screenshot:
+
+![TestRunner result](https://cdn.discordapp.com/attachments/661330929985257535/888333200429023232/unknown.png)
