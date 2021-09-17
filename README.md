@@ -1,13 +1,15 @@
 # CSEd-21-screening-test
 A screening test for working on a LupLab research project with Professor Porquet-Lupine.
 
+## 🥳Live Demo: https://abhiss.github.io/CSEd-21-screening-test/
+
 ## Prompt
  - Write a web page containing a Javascript widget that allows the user to populate a table of students (name, email, level) interactively. The level field should be one of “freshman/sophomore/junior/senior”. It should be also possible to edit any line of the table (not necessarily inside the table itself though -- up to you). Your code should make sure that fields are validated before the input is inserted in the table.
 
  - Code that doesn’t rely on external libraries is strongly encouraged. Ideally, it should be all self-contained.
 
 
-# Design Doc
+# Design decisions
 
 ## Intro
 The design decisions I make for this project are guided only by the prompt above, and where it is vague, the choices made should be in the spirit of the prompt. For example, a major design decision dictated by the prompt is the lack of a frontend framework. In the same vein, I also won't be using Typescript, which might fall under "external libraries", and would make the project not "self-contained". Instead, I will write Javascript in a Typescript-like way with JSDoc comments, which serves to aid the reader in understanding the code and allow the IDE catch type errors before runtime. I also (regrettably) wrote almost all of the program in the single [index.html](./index.html) file, to ensure it was sufficiently "self-contained". Being able to send someone the webpage by transfering a single file is nice. The exception to this is [test.js](./test.js), which only has automated tests and isn't required to use the website. 
