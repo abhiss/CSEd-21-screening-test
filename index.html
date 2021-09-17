@@ -448,7 +448,7 @@
     /** Table Body - To which rows are appended. */
     const t_body_elm = document.getElementById('tbody');
     const lab_icon_elm = document.getElementById('header-icon');
-    let isLoggingEnabled = true;
+    let isLoggingEnabled = false;
 
     /**
      * @typedef {Object} Row - Represents a row in the student info teble.
@@ -462,7 +462,7 @@
      */
     let Table = null;
 
-    let format_details = {
+    const format_details = {
         name: 'Name field must have atleast 1 character.',
         email: 'Email field must be of the format username@domain,\nwhere the tld is atleast 2 characters.',
         level: 'Level must be freshman, sophomore, junior, or senior.'
@@ -474,10 +474,10 @@
      * @returns row {HTMLTableRowElement} to be appended to tbody.
      */
     function CreateTableRow(row_data) {
-        let row = document.createElement('tr');
+        const row = document.createElement('tr');
 
-        for (let field in row_data) {
-            let td_element = document.createElement('td');
+        for (const field in row_data) {
+            const td_element = document.createElement('td');
             let data = document.createElement('input');
 
             data.contentEditable = 'true';
@@ -497,16 +497,15 @@
 
             //updates Table structure with every change to the table in DOM.
             data.oninput = function onInput(ev) {
-                let data_elm = /** @type {HTMLInputElement} */(ev.target);
-                let td = data_elm.parentElement;
-                let row_index = parseInt(td.parentElement.getAttribute('row_index')); //index of td's row in Table
-                let field = td.getAttribute('label');
-                let prev_value = data_elm.getAttribute('prev_value');
-                data_elm.setAttribute('prev_value', data_elm.value);
+                const data_elm = /** @type {HTMLInputElement} */(ev.target);
+                const td = data_elm.parentElement;
+                const row_index = parseInt(td.parentElement.getAttribute('row_index')); //index of td's row in Table
+                const field = td.getAttribute('label');
+
 
                 if (isLoggingEnabled) console.log('old: ' + Table[row_index][field] + ' | new: ' + data_elm.value);
 
-                let try_autocomplete = data_elm.value.length <= Table[row_index][field].length;
+                const try_autocomplete = data_elm.value.length <= Table[row_index][field].length;
 
                 if (field == 'level' && !try_autocomplete) {
                     data_elm.value = data_elm.value.toLowerCase();
@@ -518,7 +517,7 @@
                 if (!validateUserInput(data_elm.value, field)) {
                     if (!data_elm.classList.contains('invalid')) {
                         data_elm.classList.add('invalid');
-                        let err_detail = format_details[field];
+                        const err_detail = format_details[field];
                         data.setAttribute('title', `Format is invalid:\n${err_detail}`);
                     }
                 } else {
@@ -545,21 +544,21 @@
             row.append(td_element);
         }
         row.addEventListener('focusin', function (ev) {
-            let elm = /**@type {HTMLTableRowElement} */(ev.currentTarget);
+            const elm = /**@type {HTMLTableRowElement} */(ev.currentTarget);
             elm.classList.add('selected-row');
         });
 
         row.addEventListener('focusout', function (ev) {
-            let elm = /**@type {HTMLTableRowElement} */(ev.currentTarget);
+            const elm = /**@type {HTMLTableRowElement} */(ev.currentTarget);
             elm.classList.remove('selected-row');
         })
 
-        let delete_btn = document.createElement("div");
+        const delete_btn = document.createElement("div");
 
         delete_btn.classList.add('delete-row-btn');
         delete_btn.onmousedown = function (ev) {
-            let elm = /**@type{HTMLDivElement}*/(ev.currentTarget);
-            let row_index = parseInt(elm.parentElement.getAttribute('row_index'));
+            const elm = /**@type{HTMLDivElement}*/(ev.currentTarget);
+            const row_index = parseInt(elm.parentElement.getAttribute('row_index'));
             Table.splice(row_index, 1);
             RenderTable();
         }
@@ -584,22 +583,23 @@
     function RenderTable() {
         t_body_elm.replaceChildren(''); //remove everything from table
 
-        for (let row_index in Table) {
+        for (const row_index in Table) {
 
-            let row_element = CreateTableRow(Table[row_index]);
+            const row_element = CreateTableRow(Table[row_index]);
             row_element.setAttribute('row_index', row_index)
             t_body_elm.append(row_element);
         }
 
-        let add_row_button = document.createElement('button');
+        const add_row_button = document.createElement('button');
+        add_row_button.id = 'add-row-btn'
         add_row_button.textContent = '+';
         add_row_button.onclick = function () {
             if (isLoggingEnabled) console.log("add row button clicked");
 
             /** @type {Row} */
-            let new_row = { name: '', email: '', level: 'freshman' }
+            const new_row = { name: '', email: '', level: 'freshman' }
 
-            let new_row_elm = CreateTableRow(new_row);
+            const new_row_elm = CreateTableRow(new_row);
             Table.push(new_row);
             RenderTable();
         }
@@ -613,9 +613,9 @@
      * @returns valid {bool} if the input was valid for the type of field.
      */
     function validateUserInput(input, field) {
-        let is_name = field == ('name');
-        let is_email = field == ('email');
-        let is_level = field == ('level');
+        const is_name = field == ('name');
+        const is_email = field == ('email');
+        const is_level = field == ('level');
 
         if (!(is_name || is_email || is_level)) return false; //check field is valid.
         let valid = true;
@@ -642,11 +642,11 @@
      * @returns { boolean } - True is object is a valid table. 
      */
     function validateTableObject(maybe_table) {
-        let _maybe_table = /**@type Row[]*/(maybe_table);
+        const _maybe_table = /**@type Row[]*/(maybe_table);
 
         if (_maybe_table.length < 1) { return false };
 
-        for (let row of _maybe_table) {
+        for (const row of _maybe_table) {
             if (row.email == null || row.level == null || row.name == null) {
                 return false;
             }
@@ -671,8 +671,8 @@
 
     document.getElementById('export-json').onclick = function (ev) {
 
-        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Table));
-        let dl_elm = document.getElementById('download_empty_elm');
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Table));
+        const dl_elm = document.getElementById('download_empty_elm');
         dl_elm.setAttribute("href", dataStr);
         dl_elm.setAttribute("download", "table.json");
         dl_elm.click();
@@ -680,23 +680,20 @@
 
     document.getElementById('import-json').onclick = function (ev) {
 
-        let input = document.createElement('input');
+        const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json'
         input.onchange = e => {
 
-            // getting a hold of the file reference
-            let file = /**@type{HTMLInputElement}*/(e.target).files[0];
+            const file = /**@type{HTMLInputElement}*/(e.target).files[0];
 
-            // setting up the reader
-            let reader = new FileReader();
+            const reader = new FileReader();
             reader.readAsText(file, 'UTF-8');
 
-            // here we tell the reader what to do when it's done reading...
             reader.onload = readerEvent => {
-                let content = /**@type {string}*/(readerEvent.target.result); // this is the content!
+                const content = /**@type {string}*/(readerEvent.target.result); //
                 try {
-                    let maybe_table = JSON.parse(content);
+                    const maybe_table = JSON.parse(content);
                     if (validateTableObject(maybe_table)) {
                         Table = maybe_table;
                         RenderTable();
@@ -715,11 +712,10 @@
         input.remove();
     }
 
-
     // get data from localstorage and update table
-    let json_table = localStorage.getItem('student_table');
+    const json_table = localStorage.getItem('student_table');
     try {
-        let temp_table = JSON.parse(json_table);
+        const temp_table = JSON.parse(json_table);
 
         if (!json_table || json_table.length < 1 || !validateTableObject(temp_table)) {
             console.log();
