@@ -556,7 +556,7 @@
         const delete_btn = document.createElement("div");
 
         delete_btn.classList.add('delete-row-btn');
-        delete_btn.onmousedown = function (ev) {
+        delete_btn.onclick = function (ev) {
             const elm = /**@type{HTMLDivElement}*/(ev.currentTarget);
             const row_index = parseInt(elm.parentElement.getAttribute('row_index'));
             Table.splice(row_index, 1);
@@ -742,3 +742,5 @@
 
     RenderTable();
 </script>
+
+<script src="./test.js"></script>
