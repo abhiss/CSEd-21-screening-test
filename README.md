@@ -1,6 +1,8 @@
 # CSEd-21-screening-test
 A screening test for working on a LupLab research project with Professor Porquet-Lupine.
 
+The main branch includes changes that were made after the september 17 deadline. [Here](https://github.com/abhiss/CSEd-21-screening-test/tree/deadline) is a branch that was created before the deadline. 
+
 ## 🥳Live Demo: https://abhiss.github.io/CSEd-21-screening-test/
 
 ![Website Screenshot](https://cdn.discordapp.com/attachments/661330929985257535/888331826731548692/unknown.png)
